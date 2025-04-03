@@ -14,7 +14,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Fetch and display transactions
     async function loadTransactions() {
         try {
-            const response = await axios.get(`${API_BASE_URL}/transactions`, { params: { user_id: userId } });
+            const authToken = localStorage.getItem("authToken");
+            const response = await axios.get(`${API_BASE_URL}/transactions`, {
+                headers: { Authorization: `Bearer ${authToken}` },
+                params: { user_id: userId },
+            });
             const transactions = response.data.transactions;
             transactionTable.innerHTML = transactions.map(transaction => `
                 <tr>
@@ -35,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Add a new transaction
     transactionForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        const authToken = localStorage.getItem("authToken");
         const date = document.getElementById("date").value;
         const category = document.getElementById("category").value;
         const type = document.getElementById("type").value;
@@ -50,6 +55,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 transaction_type: type,
                 amount,
                 note,
+            }, {
+                headers: { Authorization: `Bearer ${authToken}` },
             });
             alert("Transaction added successfully!");
             transactionForm.reset();

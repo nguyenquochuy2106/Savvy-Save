@@ -1,4 +1,9 @@
-const API_BASE_URL = "https://wvattyjoisrgyrxpchkp.supabase.co/auth";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://wvattyjoisrgyrxpchkp.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2YXR0eWpvaXNyZ3lyeHBjaGtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxODQ2ODIsImV4cCI6MjA1Nzc2MDY4Mn0.aWXzjyDjtHipzsraG84d79Le7dPrQ9QEwZY2Ua9eqa4";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -11,13 +16,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = document.getElementById("password").value;
 
             try {
-                const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
                 alert("Login successful!");
-                console.log(response.data);
+                console.log(data);
+
+                // Store the authentication token in localStorage
+                localStorage.setItem("authToken", data.session.access_token);
+
                 // Redirect to dashboard
                 window.location.href = "dashboard.html";
             } catch (error) {
-                alert("Login failed: " + error.response.data.detail);
+                alert("Login failed: " + error.message);
             }
         });
     }
@@ -25,29 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const username = document.getElementById("username").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
-            const profileImage = document.getElementById("profileImage").files[0];
-
-            const formData = new FormData();
-            formData.append("username", username);
-            formData.append("email", email);
-            formData.append("password", password);
-            if (profileImage) {
-                formData.append("profile_image", profileImage);
-            }
 
             try {
-                const response = await axios.post(`${API_BASE_URL}/register`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) throw error;
+
                 alert("Registration successful!");
-                console.log(response.data);
+                console.log(data);
+
                 // Redirect to login
                 window.location.href = "index.html";
             } catch (error) {
-                alert("Registration failed: " + error.response.data.detail);
+                alert("Registration failed: " + error.message);
             }
         });
     }

@@ -6,19 +6,23 @@ router = APIRouter()
 
 @router.post("/register")
 def register(user: User):
-    response = supabase.auth.sign_up({
-        "email": user.email,
-        "password": user.password,
-    })
-    if "error" in response:
-        raise HTTPException(status_code=400, detail=response["error"]["message"])
-    supabase.table("Users").insert({
-        "id": response["user"]["id"],
-        "username": user.username,
-        "email": user.email,
-        "profile_image_url": user.profile_image_url,
-    }).execute()
-    return {"message": "User registered successfully"}
+    try:
+        response = supabase.auth.sign_up({
+            "email": user.email,
+            "password": user.password,
+        })
+        if "error" in response and response["error"]:
+            raise HTTPException(status_code=400, detail=response["error"]["message"])
+        
+        supabase.table("Users").insert({
+            "id": response["user"]["id"],
+            "username": user.username,
+            "email": user.email,
+            "profile_image_url": user.profile_image_url,
+        }).execute()
+        return {"message": "User registered successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/login")
 def login(email: str, password: str):
@@ -28,4 +32,11 @@ def login(email: str, password: str):
     })
     if "error" in response:
         raise HTTPException(status_code=400, detail=response["error"]["message"])
-    return {"message": "Login successful", "user": response["user"]}
+    return {
+        "message": "Login successful",
+        "user": {
+            "id": response["user"]["id"],
+            "email": response["user"]["email"],
+            "access_token": response["user"]["access_token"],  # Include the access token
+        },
+    }
