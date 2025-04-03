@@ -1,0 +1,31 @@
+from fastapi import APIRouter, HTTPException
+from models.user import User
+from config.supabase_client import supabase
+
+router = APIRouter()
+
+@router.post("/register")
+def register(user: User):
+    response = supabase.auth.sign_up({
+        "email": user.email,
+        "password": user.password,
+    })
+    if "error" in response:
+        raise HTTPException(status_code=400, detail=response["error"]["message"])
+    supabase.table("Users").insert({
+        "id": response["user"]["id"],
+        "username": user.username,
+        "email": user.email,
+        "profile_image_url": user.profile_image_url,
+    }).execute()
+    return {"message": "User registered successfully"}
+
+@router.post("/login")
+def login(email: str, password: str):
+    response = supabase.auth.sign_in_with_password({
+        "email": email,
+        "password": password,
+    })
+    if "error" in response:
+        raise HTTPException(status_code=400, detail=response["error"]["message"])
+    return {"message": "Login successful", "user": response["user"]}
