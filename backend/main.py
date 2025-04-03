@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from controllers import auth_controller, transaction_controller, stats_controller
+from backend.controllers import auth_controller, transaction_controller, stats_controller
 
 app = FastAPI()
 

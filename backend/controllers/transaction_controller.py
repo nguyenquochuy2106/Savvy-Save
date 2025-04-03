@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from models.transaction import Transaction
-from config.supabase_client import supabase
+from backend.models.transaction import Transaction
+from backend.config.supabase_client import supabase
 
 router = APIRouter()
 
