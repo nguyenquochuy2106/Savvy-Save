@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from backend.controllers import auth_controller, transaction_controller, stats_controller
+from backend.controllers import auth_controller, transaction_controller, stats_controller, admin_controller
 
 app = FastAPI()
 
@@ -27,6 +27,7 @@ app.add_middleware(
 app.include_router(auth_controller.router, prefix="/auth", tags=["Authentication"])
 app.include_router(transaction_controller.router, prefix="/transactions", tags=["Transactions"])
 app.include_router(stats_controller.router, prefix="/stats", tags=["Stats"])
+app.include_router(admin_controller.router, prefix="/admin", tags=["Admin"])
 
 @app.get("/")
 def root():

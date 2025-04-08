@@ -18,7 +18,6 @@ def register(user: User):
             "id": response["user"]["id"],
             "username": user.username,
             "email": user.email,
-            "profile_image_url": user.profile_image_url,
         }).execute()
         return {"message": "User registered successfully"}
     except Exception as e:
@@ -37,6 +36,6 @@ def login(email: str, password: str):
         "user": {
             "id": response["user"]["id"],
             "email": response["user"]["email"],
-            "access_token": response["user"]["access_token"],  # Include the access token
+            "access_token": response["user"]["access_token"],
         },
     }

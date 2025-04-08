@@ -25,8 +25,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Store the authentication token in localStorage
                 localStorage.setItem("authToken", data.session.access_token);
 
-                // Redirect to dashboard
-                window.location.href = "dashboard.html";
+                // Redirect based on role
+                const userRole = data.user.role; // Assume role is returned
+                if (userRole === "admin") {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "dashboard.html";
+                }
             } catch (error) {
                 alert("Login failed: " + error.message);
             }

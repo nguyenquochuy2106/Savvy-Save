@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const profileForm = document.getElementById("profileForm");
-    const profileImage = document.getElementById("profileImage");
 
     // Fetch and display user profile
     async function loadProfile() {
@@ -19,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("username").value = user.username;
             document.getElementById("email").value = user.email;
             document.getElementById("description").value = user.description || "";
-            profileImage.src = user.profile_image_url || "default-profile.png";
         } catch (error) {
             console.error("Error fetching profile:", error);
             alert("Failed to load profile.");
@@ -31,15 +29,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         const username = document.getElementById("username").value;
         const description = document.getElementById("description").value;
-        const profileImageUpload = document.getElementById("profileImageUpload").files[0];
 
         const formData = new FormData();
         formData.append("user_id", userId);
         formData.append("username", username);
         formData.append("description", description);
-        if (profileImageUpload) {
-            formData.append("profile_image", profileImageUpload);
-        }
 
         try {
             await axios.put(`${API_BASE_URL}/auth/profile`, formData, {

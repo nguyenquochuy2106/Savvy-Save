@@ -5,4 +5,3 @@ class User(BaseModel):
     username: str
     email: str
     password: str
-    profile_image_url: str
